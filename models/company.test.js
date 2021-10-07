@@ -123,6 +123,7 @@ describe("update", function () {
 
   test("works", async function () {
     let company = await Company.update("c1", updateData);
+    
     expect(company).toEqual({
       handle: "c1",
       ...updateData,

@@ -1,0 +1,7 @@
+# Auth.test.js:
+Line 18: What is the role of expect.assertions(2)?
+
+# Models - company.js:
+Lines 108-113:
+- Don't fully understand how sqlForPartialUpdate(dataToUpdate, jsToSql) works. 
+- Why did we hard code 111 & 112 ?

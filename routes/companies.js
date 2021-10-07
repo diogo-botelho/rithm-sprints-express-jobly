@@ -11,6 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companySearchSchema = require("../schemas/companySearch.json")
 
 const router = new express.Router();
 
@@ -47,8 +48,39 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const companies = await Company.findAll();
-  return res.json({ companies });
+  // console.log("router get '/'")
+
+  const data = req.query;
+  
+  // console.log("data=",data)
+  // console.log("data !== {}",data !== {})
+
+  if (Object.keys(data).length !== 0) {
+    // console.log("has parameters");
+    
+    const validator = jsonschema.validate(req.body, companySearchSchema);
+    // console.log("is validator=",validator.valid);
+
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+    else if (data.maxEmployees < data.minEmployees) {
+      throw new BadRequestError();
+    }
+    else {
+      const companies = await Company.findWithConditions(data);
+      return res.json({ companies });
+    }
+  }
+
+    else {
+    // console.log("does not have parameters parameters");
+   
+    const companies = await Company.findAll();
+      return res.json({ companies });
+    }
+  
 });
 
 /** GET /[handle]  =>  { company }
